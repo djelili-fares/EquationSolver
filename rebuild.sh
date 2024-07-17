@@ -15,6 +15,20 @@ cmake ..
 # Compiler le projet avec make
 make
 
-cd build
+# Afficher le contenu du répertoire build
+echo "Contenu du répertoire build:"
+ls -l
 
-./EquationSolver.exe 
+# Afficher le contenu des répertoires CApp et CppApp
+echo "Contenu du répertoire CApp:"
+ls -l CApp
+
+echo "Contenu du répertoire CppApp:"
+ls -l CppApp
+
+# Rendre les fichiers exécutables
+chmod +x CApp/CApp.exe
+chmod +x CppApp/CppApp.exe
+
+# Exécuter l'application : 
+./EquationSolver

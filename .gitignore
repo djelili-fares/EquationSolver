@@ -1,10 +1,11 @@
-# Ignore build directories
+# Ignorer les répertoires de build
 /build/
 
-# Ignore CMake generated files
-/CMakeFiles/
-/CMakeCache.txt
-/cmake_install.cmake
+# Ignorer les fichiers de configuration de CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
 
 # Ignore executables and libraries
 *.exe
@@ -12,9 +13,14 @@
 *.so
 *.dylib
 
-# Ignore logs and temporary files
+# Ignorer les fichiers et répertoires de Docker + logs and temporary files
+*.tar
 *.log
+docker-compose.override.yml
+.docker/
 *.tmp
 
-# Ignore Visual Studio Code settings
+# Ignorer les fichiers d'éditeurs et d'IDEs
 .vscode/
+.idea/
+*.swp
