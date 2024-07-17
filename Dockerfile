@@ -20,7 +20,7 @@ RUN chmod +x /usr/src/myapp/rebuild.sh
 RUN cat /usr/src/myapp/rebuild.sh
 
 # Construire l'application
-RUN /bin/sh -c /usr/src/myapp/rebuild.sh
+RUN /bin/bash /usr/src/myapp/rebuild.sh
 
 # Définir le point d'entrée du conteneur
 CMD ["./build/EquationSolver"]
