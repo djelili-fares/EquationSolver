@@ -16,8 +16,11 @@ RUN ls -l /usr/src/myapp
 # Rendre le script rebuild.sh exécutable
 RUN chmod +x /usr/src/myapp/rebuild.sh
 
+# Afficher le contenu de rebuild.sh pour vérifier qu'il est correct
+RUN cat /usr/src/myapp/rebuild.sh
+
 # Construire l'application
-RUN /usr/src/myapp/rebuild.sh
+RUN /bin/sh -c /usr/src/myapp/rebuild.sh
 
 # Définir le point d'entrée du conteneur
 CMD ["./build/EquationSolver"]
