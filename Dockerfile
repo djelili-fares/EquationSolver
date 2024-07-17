@@ -12,13 +12,12 @@ WORKDIR /usr/src/myapp
 
 # Vérifier la présence de rebuild.sh et afficher le contenu du répertoire
 RUN ls -l /usr/src/myapp
-RUN ls -l /usr/src/myapp/rebuild.sh
 
 # Rendre le script rebuild.sh exécutable
-RUN chmod +x rebuild.sh
+RUN chmod +x /usr/src/myapp/rebuild.sh
 
 # Construire l'application
-RUN ./rebuild.sh
+RUN /usr/src/myapp/rebuild.sh
 
 # Définir le point d'entrée du conteneur
 CMD ["./build/EquationSolver"]
