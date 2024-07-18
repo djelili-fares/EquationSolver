@@ -10,6 +10,18 @@ pipeline {
                 bat 'type Jenkinsfile' // Afficher le contenu du Jenkinsfile pour vérifier
             }
         }
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                bat 'docker build -t equationsolver .'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                bat 'docker run equationsolver ./build/EquationSolver'
+            }
+        }
     }
 
     post {
@@ -17,10 +29,10 @@ pipeline {
             echo 'Pipeline completed.'
         }
         failure {
-            echo 'Checkout failed!'
+            echo 'Pipeline failed!'
         }
         success {
-            echo 'Checkout succeeded!'
+            echo 'Pipeline succeeded!'
         }
     }
 }
