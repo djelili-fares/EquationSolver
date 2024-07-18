@@ -1,0 +1,124 @@
+groovy
+Copier le code
+pipeline {
+    agent any // Définir l'agent pour exécuter le pipeline sur n'importe quel nœud disponible
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git'
+                // Cloner le dépôt Git spécifié à partir de la branche principale
+                echo 'Checkout completed.'
+                bat 'dir' // Lister les fichiers dans le répertoire de travail
+                bat 'type Jenkinsfile' // Afficher le contenu du Jenkinsfile pour vérifier qu'il est correct
+            }
+        }
+        stage('Prepare Dockerfile') {
+            steps {
+                echo 'Preparing temporary Dockerfile...'
+                writeFile file: 'Dockerfile.tmp', text: '''
+                    FROM gcc:latest
+                    RUN apt-get update && apt-get install -y cmake make dos2unix
+                    COPY . /usr/src/myapp
+                    WORKDIR /usr/src/myapp
+                    RUN dos2unix /usr/src/myapp/rebuild.sh
+                    RUN chmod +x /usr/src/myapp/rebuild.sh
+                    RUN ls -l /usr/src/myapp
+                    RUN cat /usr/src/myapp/rebuild.sh
+                    RUN /bin/bash /usr/src/myapp/rebuild.sh
+                '''
+                // Créer un Dockerfile temporaire pour construire l'application
+                bat 'type Dockerfile.tmp' // Afficher le contenu du Dockerfile temporaire pour vérification
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                bat 'docker build -t equationsolver -f Dockerfile.tmp .'
+                // Construire l'image Docker en utilisant le Dockerfile temporaire
+            }
+        }
+        stage('Diagnose Docker Build') {
+            steps {
+                echo 'Diagnosing Docker build...'
+                bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp"'
+                // Lister les fichiers dans le répertoire de l'application dans le conteneur Docker
+                bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh || echo rebuild.sh not found"'
+                // Afficher le contenu du script rebuild.sh ou indiquer s'il n'est pas trouvé
+            }
+        }
+        stage('Debug Rebuild') {
+            steps {
+                echo 'Debugging rebuild.sh execution...'
+                bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp/rebuild.sh && file /usr/src/myapp/rebuild.sh && head -n 5 /usr/src/myapp/rebuild.sh"'
+                // Lister le script rebuild.sh, afficher ses métadonnées et les 5 premières lignes pour le débogage
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                bat 'docker build -t equationsolver-test -f Dockerfile.tmp .'
+                // Construire une nouvelle image Docker pour les tests
+                bat 'docker run equationsolver-test /bin/bash -c "chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh"'
+                // Exécuter le script rebuild.sh dans le conteneur de test
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.' // Toujours afficher ce message à la fin du pipeline
+        }
+        failure {
+            echo 'Pipeline failed!' // Afficher ce message si le pipeline échoue
+        }
+        success {
+            echo 'Pipeline succeeded!' // Afficher ce message si le pipeline réussit
+        }
+    }
+}
+Explication détaillée des sections :
+Pipeline Block
+pipeline { ... } : Déclare le début du pipeline.
+Agent
+agent any : Utilise n'importe quel agent disponible pour exécuter le pipeline.
+Stages
+stages { ... } : Définit les différentes étapes du pipeline.
+Stage: Checkout
+stage('Checkout') { ... } : Première étape pour cloner le dépôt Git.
+git branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git' : Cloner le dépôt Git.
+echo 'Checkout completed.' : Afficher un message indiquant que le clonage est terminé.
+bat 'dir' : Lister les fichiers dans le répertoire de travail.
+bat 'type Jenkinsfile' : Afficher le contenu du Jenkinsfile pour vérification.
+Stage: Prepare Dockerfile
+stage('Prepare Dockerfile') { ... } : Prépare un Dockerfile temporaire pour construire l'image Docker.
+echo 'Preparing temporary Dockerfile...' : Afficher un message indiquant que le Dockerfile temporaire est en préparation.
+writeFile file: 'Dockerfile.tmp', text: ''' ... ''' : Écrire le contenu du Dockerfile temporaire.
+bat 'type Dockerfile.tmp' : Afficher le contenu du Dockerfile temporaire pour vérification.
+Stage: Build
+stage('Build') { ... } : Construire l'image Docker en utilisant le Dockerfile temporaire.
+echo 'Building the project...' : Afficher un message indiquant que la construction du projet commence.
+bat 'docker build -t equationsolver -f Dockerfile.tmp .' : Construire l'image Docker avec le tag equationsolver.
+Stage: Diagnose Docker Build
+stage('Diagnose Docker Build') { ... } : Diagnostiquer la construction de l'image Docker.
+echo 'Diagnosing Docker build...' : Afficher un message indiquant que le diagnostic de la construction Docker commence.
+bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp"' : Lister les fichiers dans le répertoire de l'application.
+bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh || echo rebuild.sh not found"' : Afficher le contenu du script rebuild.sh ou indiquer s'il n'est pas trouvé.
+Stage: Debug Rebuild
+stage('Debug Rebuild') { ... } : Déboguer l'exécution du script rebuild.sh.
+echo 'Debugging rebuild.sh execution...' : Afficher un message indiquant que le débogage du script rebuild.sh commence.
+bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp/rebuild.sh && file /usr/src/myapp/rebuild.sh && head -n 5 /usr/src/myapp/rebuild.sh"' : Lister le script rebuild.sh, afficher ses métadonnées et les 5 premières lignes.
+Stage: Test
+stage('Test') { ... } : Construire et tester l'application.
+echo 'Running tests...' : Afficher un message indiquant que les tests commencent.
+bat 'docker build -t equationsolver-test -f Dockerfile.tmp .' : Construire une nouvelle image Docker pour les tests avec le tag equationsolver-test.
+bat 'docker run equationsolver-test /bin/bash -c "chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh"' : Exécuter le script rebuild.sh dans le conteneur de test.
+Post
+post { ... } : Actions à exécuter après la fin du pipeline.
+always { ... } : Actions à exécuter toujours, qu'il y ait succès ou échec.
+echo 'Pipeline completed.' : Afficher un message indiquant que le pipeline est terminé.
+failure { ... } : Actions à exécuter en cas d'échec.
+echo 'Pipeline failed!' : Afficher un message indiquant que le pipeline a échoué.
+success { ... } : Actions à exécuter en cas de succès.
+echo 'Pipeline succeeded!' : Afficher un message indiquant que le pipeline a réussi.
+Ces commentaires devraient vous aider à comprendre chaque partie du Jenkinsfile et le fonctionnement global du pipeline.
