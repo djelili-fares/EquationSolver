@@ -25,5 +25,14 @@ RUN cat /usr/src/myapp/rebuild.sh
 # Construire l'application
 RUN /bin/bash /usr/src/myapp/rebuild.sh
 
+# Copier le script run_solver.sh dans le conteneur
+COPY run_solver.sh /usr/src/myapp/run_solver.sh
+
+# Convertir les fins de ligne du script run_solver.sh au format Unix
+RUN dos2unix /usr/src/myapp/run_solver.sh
+
+# Rendre le script run_solver.sh exécutable
+RUN chmod +x /usr/src/myapp/run_solver.sh
+
 # Définir le point d'entrée du conteneur
 CMD ["./build/EquationSolver"]
