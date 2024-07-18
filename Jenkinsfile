@@ -10,11 +10,10 @@ pipeline {
                 bat 'type Jenkinsfile' // Afficher le contenu du Jenkinsfile pour vérifier
             }
         }
-        stage('Build') {
+        stage('Prepare Dockerfile') {
             steps {
-                echo 'Building the project...'
-                bat '''
-                    docker build -t equationsolver -f- . <<EOF
+                echo 'Preparing temporary Dockerfile...'
+                writeFile file: 'Dockerfile.tmp', text: '''
                     FROM gcc:latest
                     RUN apt-get update && apt-get install -y cmake make
                     COPY . /usr/src/myapp
@@ -23,8 +22,14 @@ pipeline {
                     RUN ls -l /usr/src/myapp
                     RUN cat /usr/src/myapp/rebuild.sh
                     RUN ./rebuild.sh
-                    EOF
                 '''
+                bat 'type Dockerfile.tmp'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                bat 'docker build -t equationsolver -f Dockerfile.tmp .'
             }
         }
         stage('Diagnose Docker Build') {
