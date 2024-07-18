@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Supprimer le répertoire build s'il existe :
+# Supprimer le répertoire build s'il existe
 rm -rf build 
 
 # Créer le répertoire de build
@@ -15,20 +15,22 @@ cmake ..
 # Compiler le projet avec make
 make
 
-# Afficher le contenu du répertoire build
-echo "Contenu du répertoire build:"
+# Vérifier le contenu du répertoire de build et les permissions des fichiers
+echo "Contenu du répertoire build après la compilation :"
 ls -l
 
-# Afficher le contenu des répertoires CApp et CppApp
-echo "Contenu du répertoire CApp:"
+echo "Contenu du répertoire build/CApp après la compilation :"
 ls -l CApp
 
-echo "Contenu du répertoire CppApp:"
+echo "Contenu du répertoire build/CppApp après la compilation :"
 ls -l CppApp
 
-# Rendre les fichiers exécutables
-chmod +x CApp/CApp.exe
-chmod +x CppApp/CppApp.exe
+# Vérifier les permissions / Ces deux lignes sont facultatives
+chmod +x CApp/CApp
+chmod +x CppApp/CppApp
 
-# Exécuter l'application : 
-./EquationSolver
+# Revenir au répertoire précédent
+cd ..
+
+# Exécuter l'application
+./build/EquationSolver

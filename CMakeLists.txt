@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
+
+# Projet principal
 project(EquationSolver)
 
-# Ajouter les sous-répertoires
-add_subdirectory(CppApp)
+# Ajouter le sous-répertoire pour CApp et CppApp
 add_subdirectory(CApp)
+add_subdirectory(CppApp)
 
 # Ajouter l'exécutable principal
 add_executable(EquationSolver main.cpp)
-
-# Spécifier les dépendances
-add_dependencies(EquationSolver CppApp CApp)
