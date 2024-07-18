@@ -49,10 +49,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                script {
-                    def imageId = bat(script: "docker build -t equationsolver .", returnStdout: true).trim()
-                    bat "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
-                }
+                bat 'docker build -t equationsolver-test -f Dockerfile.tmp .'
+                bat "docker run equationsolver-test sh -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
             }
         }
     }
