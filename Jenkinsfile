@@ -21,7 +21,7 @@ pipeline {
                 echo 'Diagnosing Docker build...'
                 bat 'docker build -t equationsolver .'
                 bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp"'
-                bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh"'
+                bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh || echo rebuild.sh not found"'
             }
         }
         stage('Test') {
