@@ -39,6 +39,12 @@ pipeline {
                 bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh || echo rebuild.sh not found"'
             }
         }
+        stage('Debug Rebuild') {
+            steps {
+                echo 'Debugging rebuild.sh execution...'
+                bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp/rebuild.sh && file /usr/src/myapp/rebuild.sh && head -n 5 /usr/src/myapp/rebuild.sh"'
+            }
+        }
         stage('Test') {
             steps {
                 echo 'Running tests...'
