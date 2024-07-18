@@ -10,31 +10,25 @@ COPY . /usr/src/myapp
 # Définir le répertoire de travail
 WORKDIR /usr/src/myapp
 
-# Vérifier la présence de rebuild.sh et afficher le contenu du répertoire
+# Vérifier la présence des scripts et afficher le contenu du répertoire
 RUN ls -l /usr/src/myapp
 
-# Convertir les fins de ligne du script rebuild.sh au format Unix
+# Convertir les fins de ligne des scripts au format Unix
 RUN dos2unix /usr/src/myapp/rebuild.sh
+RUN dos2unix /usr/src/myapp/run_solver.sh
 
-# Rendre le script rebuild.sh exécutable
+# Rendre les scripts exécutables
 RUN chmod +x /usr/src/myapp/rebuild.sh
+RUN chmod +x /usr/src/myapp/run_solver.sh
 
-# Afficher le contenu de rebuild.sh pour vérifier qu'il est correct
+# Afficher le contenu des scripts pour vérifier qu'ils sont corrects
 RUN cat /usr/src/myapp/rebuild.sh
+RUN cat /usr/src/myapp/run_solver.sh
 
 # Construire l'application
 RUN /bin/bash /usr/src/myapp/rebuild.sh
 
-# Copier le script run_solver.sh dans le conteneur
-COPY run_solver.sh /usr/src/myapp/run_solver.sh
-
-# Convertir les fins de ligne du script run_solver.sh au format Unix
-RUN dos2unix /usr/src/myapp/run_solver.sh
-
-# Rendre le script run_solver.sh exécutable
-RUN chmod +x /usr/src/myapp/run_solver.sh
-
-# Vérifier la présence de run_solver.sh et afficher le contenu du répertoire
+# Vérifier la présence des scripts après la construction
 RUN ls -l /usr/src/myapp
 
 # Définir le point d'entrée du conteneur
