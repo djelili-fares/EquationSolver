@@ -13,13 +13,23 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                bat 'docker build -t equationsolver .'
+                bat '''
+                    docker build -t equationsolver -f- . <<EOF
+                    FROM gcc:latest
+                    RUN apt-get update && apt-get install -y cmake make
+                    COPY . /usr/src/myapp
+                    WORKDIR /usr/src/myapp
+                    RUN chmod +x rebuild.sh
+                    RUN ls -l /usr/src/myapp
+                    RUN cat /usr/src/myapp/rebuild.sh
+                    RUN ./rebuild.sh
+                    EOF
+                '''
             }
         }
         stage('Diagnose Docker Build') {
             steps {
                 echo 'Diagnosing Docker build...'
-                bat 'docker build -t equationsolver .'
                 bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp"'
                 bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh || echo rebuild.sh not found"'
             }
