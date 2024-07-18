@@ -1,0 +1,94 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'equationsolver'
+        GIT_REPO = 'https://github.com/djelili-fares/EquationSolver.git'
+        GIT_BRANCH = 'main'
+    }
+
+    stages {
+        stage('Check Docker Installation') {
+            steps {
+                script {
+                    echo "Checking Docker installation..."
+                    bat 'docker --version'
+                    bat 'docker run hello-world'
+                }
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                script {
+                    echo "Cloning repository..."
+                    git branch: "${env.GIT_BRANCH}", url: "${env.GIT_REPO}"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building Docker image..."
+                    bat 'docker build -t equationsolver .'
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Convertir le chemin du répertoire de travail en style Unix pour Docker
+                    def workspaceDir = "${env.WORKSPACE}".replace('\\', '/').replaceAll(/^([a-zA-Z]):/, '/mnt/$1').toLowerCase()
+                    echo "Workspace Directory: ${workspaceDir}"
+
+                    // Vérifier le chemin de travail avant d'exécuter le conteneur Docker
+                    bat "echo Workspace Directory: ${workspaceDir}"
+                    bat "dir ${env.WORKSPACE}"
+
+                    // Créer un fichier temporaire pour l'entrée de l'application C++
+                    bat """
+                        echo C++ > ${env.WORKSPACE}\\input_cpp.txt
+                        echo 1 2 3 >> ${env.WORKSPACE}\\input_cpp.txt
+                    """
+
+                    // Créer un fichier temporaire pour l'entrée de l'application C
+                    bat """
+                        echo C > ${env.WORKSPACE}\\input_c.txt
+                        echo 1 2 3 >> ${env.WORKSPACE}\\input_c.txt
+                    """
+
+                    // Vérifier la présence et les permissions des fichiers de script avant de les exécuter
+                    def commandCheckScripts = """
+                        docker run -v ${env.WORKSPACE}:${workspaceDir} -w ${workspaceDir} ${DOCKER_IMAGE} sh -c "ls -l /usr/src/myapp && ls -l /usr/src/myapp/run_solver.sh"
+                    """
+                    echo "Checking script permissions: ${commandCheckScripts}"
+                    bat commandCheckScripts
+
+                    // Exécuter le conteneur Docker avec les fichiers d'entrée
+                    def commandCpp = """
+                        docker run -v ${env.WORKSPACE}:${workspaceDir} -w ${workspaceDir} ${DOCKER_IMAGE} sh -c "/usr/src/myapp/run_solver.sh input_cpp.txt"
+                    """
+                    echo "Executing Docker command for C++: ${commandCpp}"
+                    bat commandCpp
+
+                    def commandC = """
+                        docker run -v ${env.WORKSPACE}:${workspaceDir} -w ${workspaceDir} ${DOCKER_IMAGE} sh -c "/usr/src/myapp/run_solver.sh input_c.txt"
+                    """
+                    echo "Executing Docker command for C: ${commandC}"
+                    bat commandC
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+            script {
+                bat 'docker system prune -f'
+            }
+        }
+    }
+}
