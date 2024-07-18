@@ -34,5 +34,8 @@ RUN dos2unix /usr/src/myapp/run_solver.sh
 # Rendre le script run_solver.sh exécutable
 RUN chmod +x /usr/src/myapp/run_solver.sh
 
+# Vérifier la présence de run_solver.sh et afficher le contenu du répertoire
+RUN ls -l /usr/src/myapp
+
 # Définir le point d'entrée du conteneur
 CMD ["./build/EquationSolver"]
