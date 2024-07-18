@@ -50,8 +50,8 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 script {
-                    def imageId = sh(script: "docker build -t equationsolver .", returnStdout: true).trim()
-                    sh "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
+                    def imageId = bat(script: "docker build -t equationsolver .", returnStdout: true).trim()
+                    bat "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
                 }
             }
         }
