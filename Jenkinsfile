@@ -18,10 +18,10 @@ pipeline {
                     RUN apt-get update && apt-get install -y cmake make
                     COPY . /usr/src/myapp
                     WORKDIR /usr/src/myapp
-                    RUN chmod +x rebuild.sh
+                    RUN chmod +x /usr/src/myapp/rebuild.sh
                     RUN ls -l /usr/src/myapp
                     RUN cat /usr/src/myapp/rebuild.sh
-                    RUN ./rebuild.sh
+                    RUN /bin/bash /usr/src/myapp/rebuild.sh
                 '''
                 bat 'type Dockerfile.tmp'
             }
@@ -50,7 +50,7 @@ pipeline {
                 echo 'Running tests...'
                 script {
                     def imageId = sh(script: "docker build -t equationsolver .", returnStdout: true).trim()
-                    sh "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && ./rebuild.sh'"
+                    sh "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
                 }
             }
         }
