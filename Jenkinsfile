@@ -8,8 +8,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Cloner le dépôt
-                git 'https://github.com/djelili-fares/EquationSolver.git'
+                // Cloner le dépôt et vérifier la branche main
+                git branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git'
             }
         }
         stage('Build') {
