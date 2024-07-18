@@ -14,8 +14,12 @@ pipeline {
         }
         stage('Build') {
             steps {
-                // Utiliser bash pour exécuter le script rebuild.sh
-                bat 'bash -c "sh rebuild.sh"'
+                script {
+                    def status = bat(script: 'docker build -t ${DOCKER_IMAGE} .', returnStatus: true)
+                    if (status != 0) {
+                        error "Docker build failed with status ${status}"
+                    }
+                }
             }
         }
         stage('Test') {
@@ -26,8 +30,12 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                // Construire l'image Docker
-                bat 'docker build -t %DOCKER_IMAGE% .'
+                script {
+                    def status = bat(script: 'docker build -t ${DOCKER_IMAGE} .', returnStatus: true)
+                    if (status != 0) {
+                        error "Docker build failed with status ${status}"
+                    }
+                }
             }
         }
         stage('Push Docker Image') {
