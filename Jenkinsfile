@@ -7,8 +7,6 @@ pipeline {
                 // Cloner le dépôt Git depuis la branche principale
                 git branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git'
                 echo 'Checkout completed.'
-                // Afficher les fichiers du répertoire de travail
-                bat 'dir'
             }
         }
         stage('Prepare Dockerfile') {
@@ -26,18 +24,14 @@ pipeline {
                 '''
             }
         }
-        stage('Build') {
+        stage('Build and Test') {
             steps {
-                echo 'Building the project...'
-                // Construire l'image Docker en utilisant le Dockerfile temporaire
-                bat 'docker build -t equationsolver -f Dockerfile.tmp .'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Exécuter les tests dans un conteneur Docker basé sur l'image construite
-                bat 'docker run equationsolver /bin/bash -c "chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh"'
+                echo 'Building and testing the project...'
+                // Construire l'image Docker en utilisant le Dockerfile temporaire et exécuter les tests
+                bat '''
+                    docker build -t equationsolver -f Dockerfile.tmp .
+                    docker run equationsolver /bin/bash -c "chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh"
+                '''
             }
         }
     }
