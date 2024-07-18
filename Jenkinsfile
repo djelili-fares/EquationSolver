@@ -19,7 +19,10 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                bat 'docker run equationsolver ./build/EquationSolver'
+                script {
+                    def imageId = sh(script: "docker build -t equationsolver .", returnStdout: true).trim()
+                    sh "docker run ${imageId} sh -c 'ls -l /usr/src/myapp && ./rebuild.sh'"
+                }
             }
         }
     }
