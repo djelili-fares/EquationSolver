@@ -21,7 +21,9 @@ pipeline {
                 echo 'Running tests...'
                 script {
                     def imageId = sh(script: "docker build -t equationsolver .", returnStdout: true).trim()
-                    sh "docker run ${imageId} sh -c 'ls -l /usr/src/myapp && cat /usr/src/myapp/rebuild.sh && ./rebuild.sh'"
+                    sh "docker run equationsolver sh -c 'ls -l /usr/src/myapp'"
+                    sh "docker run equationsolver sh -c 'cat /usr/src/myapp/rebuild.sh'"
+                    sh "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && ./rebuild.sh'"
                 }
             }
         }
