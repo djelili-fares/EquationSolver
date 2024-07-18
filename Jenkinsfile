@@ -50,7 +50,7 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 bat 'docker build -t equationsolver-test -f Dockerfile.tmp .'
-                bat "docker run equationsolver-test sh -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
+                bat "docker run equationsolver-test /bin/bash -c 'chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh'"
             }
         }
     }
