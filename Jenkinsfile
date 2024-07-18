@@ -15,9 +15,10 @@ pipeline {
                 echo 'Preparing temporary Dockerfile...'
                 writeFile file: 'Dockerfile.tmp', text: '''
                     FROM gcc:latest
-                    RUN apt-get update && apt-get install -y cmake make
+                    RUN apt-get update && apt-get install -y cmake make dos2unix
                     COPY . /usr/src/myapp
                     WORKDIR /usr/src/myapp
+                    RUN dos2unix /usr/src/myapp/rebuild.sh
                     RUN chmod +x /usr/src/myapp/rebuild.sh
                     RUN ls -l /usr/src/myapp
                     RUN cat /usr/src/myapp/rebuild.sh
