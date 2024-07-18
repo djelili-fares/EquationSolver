@@ -43,7 +43,7 @@ pipeline {
 
     post {
         always {
-            // Notifications ou nettoyage après le build
+            echo 'Pipeline completed.'
         }
         success {
             echo 'Build succeeded!'
