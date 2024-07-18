@@ -16,13 +16,19 @@ pipeline {
                 bat 'docker build -t equationsolver .'
             }
         }
+        stage('Diagnose Docker Build') {
+            steps {
+                echo 'Diagnosing Docker build...'
+                bat 'docker build -t equationsolver .'
+                bat 'docker run equationsolver sh -c "ls -l /usr/src/myapp"'
+                bat 'docker run equationsolver sh -c "cat /usr/src/myapp/rebuild.sh"'
+            }
+        }
         stage('Test') {
             steps {
                 echo 'Running tests...'
                 script {
                     def imageId = sh(script: "docker build -t equationsolver .", returnStdout: true).trim()
-                    sh "docker run equationsolver sh -c 'ls -l /usr/src/myapp'"
-                    sh "docker run equationsolver sh -c 'cat /usr/src/myapp/rebuild.sh'"
                     sh "docker run equationsolver sh -c 'chmod +x /usr/src/myapp/rebuild.sh && ./rebuild.sh'"
                 }
             }
