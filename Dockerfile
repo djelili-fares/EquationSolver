@@ -28,7 +28,7 @@ RUN cat /usr/src/myapp/run_solver.sh
 # Construire l'application
 RUN /bin/bash /usr/src/myapp/rebuild.sh
 
-# Vérifier la présence des scripts après la construction
+# Vérifier la présence et les permissions des scripts après la construction
 RUN ls -l /usr/src/myapp
 
 # Définir le point d'entrée du conteneur
