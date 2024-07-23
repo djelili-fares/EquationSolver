@@ -1,0 +1,35 @@
+# Mettre à jour le système
+sudo apt update
+sudo apt upgrade -y
+
+# Installer les dépendances nécessaires
+sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+
+# Ajouter la clé GPG officielle de Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Ajouter le dépôt Docker à APT sources
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Mettre à jour la base de données des paquets
+sudo apt update
+
+# Installer Docker
+sudo apt install docker-ce -y
+
+# Vérifier l'installation de Docker
+docker --version
+
+# Ajouter votre utilisateur au groupe Docker
+sudo usermod -aG docker $USER
+
+# Se déconnecter et se reconnecter ou redémarrer le terminal
+
+# Naviguer vers le répertoire de votre projet
+cd ~/Bureau/DevTraining/GitWorkSpace/EquationSolver
+
+# Construire l'image Docker
+docker build -t equationsolver:v1.0 .
+
+# Exécuter le conteneur Docker
+docker run --rm equationsolver:v1.0
