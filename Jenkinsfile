@@ -28,7 +28,7 @@ pipeline {
             steps {
                 echo 'Building and testing the project...'
                 // Construire l'image Docker en utilisant le Dockerfile temporaire et exécuter les tests
-                bat '''
+                sh '''
                     docker build -t equationsolver -f Dockerfile.tmp .
                     docker run equationsolver /bin/bash -c "chmod +x /usr/src/myapp/rebuild.sh && /bin/bash /usr/src/myapp/rebuild.sh"
                 '''
