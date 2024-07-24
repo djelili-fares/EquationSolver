@@ -1,16 +1,15 @@
 pipeline {
     agent any
 
+    environment {
+        GITHUB_CREDENTIALS = credentials('github_ubuntu_kenkins_acess')
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    // Utiliser les credentials configurés
-                    withCredentials([usernamePassword(credentialsId: 'github_ubuntu_kenkins_acess', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                        // Cloner le dépôt Git depuis la branche principale
-                        git branch: 'main', url: "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/djelili-fares/EquationSolver.git"
-                    }
-                }
+                // Utiliser les credentials pour cloner le dépôt Git
+                git credentialsId: "${env.GITHUB_CREDENTIALS}", branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git'
                 echo 'Checkout completed.'
             }
         }
