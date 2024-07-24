@@ -4,8 +4,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Cloner le dépôt Git depuis la branche principale
-                git branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git'
+                script {
+                    // Utiliser les credentials configurés
+                    withCredentials([usernamePassword(credentialsId: 'github_ubuntu_kenkins_acess', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        // Cloner le dépôt Git depuis la branche principale
+                        git branch: 'main', url: "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/djelili-fares/EquationSolver.git"
+                    }
+                }
                 echo 'Checkout completed.'
             }
         }
