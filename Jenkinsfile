@@ -4,7 +4,9 @@ pipeline {
     // Déclaration des variables d'environnement
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // ID des identifiants Docker Hub
-        DOCKER_IMAGE_NAME = 'equationsolver' // Nom de l'image Docker
+        // DOCKER_IMAGE_NAME = 'equationsolver' // Nom de l'image Docker
+        // DOCKER_TAG = 'latest' // Tag de l'image Docker
+        DOCKER_IMAGE_NAME = 'fares7816/equationsolverjenkins' // Nom de l'image Docker
         DOCKER_TAG = 'latest' // Tag de l'image Docker
     }
 
@@ -52,21 +54,22 @@ pipeline {
             }
         }
 
+
         // 5th stage : 'Build Docker Image'
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image...' // Affiche un message indiquant que la construction de l'image Docker commence
-                sh 'docker build -t equationsolver:latest .' // Construire l'image Docker
+                sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ." // Construire l'image Docker avec le tag défini
                 echo 'Docker image built successfully.' // Affiche un message indiquant que l'image Docker a été construite avec succès
             }
         }
 
-        // 6th stage : Pussh Docker image into Docker Hub
+// 6th stage : Pussh Docker image into Docker Hub
         stage('Push Docker Image') { 
             steps { // Actions à exécuter dans cette étape
-                withDockerRegistry([credentialsId: 'dockerhub_credentials', url: 'https://index.docker.io/v1/']) {
+                withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: 'https://index.docker.io/v1/']) {
                     echo 'Pushing Docker image...' // Affiche un message indiquant que l'image Docker va être poussée vers Docker Hub
-                    sh 'docker push fares7816/equationsolverjenkins:latest' // Pousser l'image Docker vers Docker Hub
+                    sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}" // Pousser l'image Docker vers Docker Hub
                 }
             }
         }
