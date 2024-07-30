@@ -25,6 +25,19 @@ pipeline {
             }
         }
 
+         stage('Verify Build') { // 4ème étape : 'Vérifier que les exécutables sont générées et que la compilation est réussie'
+            steps {
+                echo 'Verifying build...'
+                script {
+                    if (fileExists('build/EquationSolver') && fileExists('build/CApp/CApp') && fileExists('build/CppApp/CppApp')) {
+                        echo 'Compilation and build were successful. All executables are present.'
+                    } else {
+                        error('Compilation failed or some executables are missing.')
+                    }
+                }
+            }
+        }
+
     }
 
     post { // Actions à effectuer après l'exécution des étapes définies dans 'stages'
