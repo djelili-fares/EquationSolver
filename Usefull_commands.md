@@ -209,3 +209,33 @@ b. Lancer cette ligne pour lister les commandes jenkins CLI : java -jar jenkins-
 c. S'authentifier avec jenkins CLI : java -jar jenkins-cli.jar -s http://localhost:8080/ -auth fares7816:11fbe35f9873f98bd49055cf609504efad who-am-i
 d. Lister les agents jenkins : java -jar jenkins-cli.jar -s http://localhost:8080/ -auth fares7816:11fbe35f9873f98bd49055cf609504efad list-nodes
 
+##################################################################
+################################################################## 
+
+#### Corriger cette erreur : (Dans jenkins quand on essaye d'utiliser docker)
+ERROR: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Head "http://%2Fvar%2Frun%2Fdocker.sock/_ping": dial unix /var/run/docker.sock: connect: permission denied
+#####
+
+## Ajout de l'utilisateur Jenkins au groupe Docker
+Trouvez l'utilisateur Jenkins. Cela peut varier selon votre système d'exploitation et votre configuration Jenkins. Typiquement, l'utilisateur Jenkins est jenkins.
+Vous pouvez le vérifier en utilisant ps aux | grep jenkins pour voir sous quel utilisateur Jenkins fonctionne : 
+
+fares@djelili:~/Bureau/DevTraining/GitWorkSpace/EquationSolver$ ps aux | grep jenkins
+jenkins    12563  3.6 13.5 9978868 2128568 ?     Ssl  17:11   3:49 /usr/bin/java -Djava.awt.headless=true -jar /usr/share/java/jenkins.war --webroot=/var/cache/jenkins/war --httpPort=8080
+fares      13221  0.6  0.9 8325708 144456 pts/1  Sl+  17:22   0:36 java -jar agent.jar -url http://localhost:8080/ -secret c51707fb1282b68baef1abd4678666e5aa53e598a2bf18a5e9706af27af2f8a1 -name build_node -workDir /home/jenkins/agent
+fares      21513  0.0  0.0   6648  2176 pts/0    S+   18:54   0:00 grep --color=auto jenkins
+
+
+# Vérification du groupe Docker 
+fares@djelili:~/Bureau/DevTraining/GitWorkSpace/EquationSolver$ sudo groupadd docker
+groupadd : le groupe 'docker' existe déjà
+
+# Ajoutez l'utilisateur Jenkins au groupe Docker :
+fares@djelili:~/Bureau/DevTraining/GitWorkSpace/EquationSolver$ sudo usermod -aG docker jenkins
+
+# Restart Jenkins service
+fares@djelili:~/Bureau/DevTraining/GitWorkSpace/EquationSolver$ sudo systemctl restart jenkins
+
+# Vérifier les autorisation attribué à l'utilisateur jenkins : 
+fares@djelili:~/Bureau/DevTraining/GitWorkSpace/EquationSolver$ ls -l /var/run/docker.sock
+srw-rw---- 1 root docker 0 juil. 30 17:52 /var/run/docker.sock

@@ -1,8 +1,15 @@
 pipeline {
     agent any // Utilise n'importe quel agent disponible pour exécuter les étapes de ce pipeline
 
-    stages { // Définition des différentes étapes du pipeline
+    // Déclaration des variables d'environnement
+    environment {
+        DOCKER_CREDENTIALS_ID = 'dockerhub_credentials' // ID des identifiants Docker Hub
+        DOCKER_IMAGE_NAME = 'equationsolver' // Nom de l'image Docker
+        DOCKER_TAG = 'latest' // Tag de l'image Docker
+    }
 
+    // Définition des différentes étapes du pipeline
+    stages { 
         // 1st stage  : 'Checkout'
         stage('Checkout') { 
             steps { // Actions à exécuter dans cette étape
@@ -54,6 +61,16 @@ pipeline {
             }
         }
 
+        // 6th stage : Pussh Docker image into Docker Hub
+        stage('Push Docker Image') { // Étape de publication de l'image Docker sur Docker Hub
+            steps {
+                // Se connecter à Docker Hub en utilisant les identifiants spécifiés
+                withDockerRegistry([credentialsId: "$DOCKER_CREDENTIALS_ID", url: '']) {
+                    echo 'Pushing Docker image...' // Affiche un message indiquant que la publication de l'image Docker commence
+                    sh 'docker push $DOCKER_IMAGE_NAME:$DOCKER_TAG' // Pousse l'image Docker vers Docker Hub avec le nom et le tag spécifiés
+                }
+            }
+        }
     }
 
     // Actions to do after executions of stages steps
