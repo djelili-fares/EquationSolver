@@ -16,6 +16,15 @@ pipeline {
                 echo 'Repository cloned and ready for build.' // Affiche un message indiquant que le dépôt a été cloné et est prêt pour la construction
             }
         }
+
+        stage('Build') { // Troisième étape : 'Compilation de l'application'
+            steps { // La compilation se fait en exécutant simplement le fichier rebuild.sh :
+                echo 'Starting build process...' 
+                sh 'chmod +x rebuild.sh'
+                sh './rebuild.sh'
+            }
+        }
+
     }
 
     post { // Actions à effectuer après l'exécution des étapes définies dans 'stages'
