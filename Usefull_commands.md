@@ -104,7 +104,12 @@
    
 
 ### C. Pusher l'image Docker vers Docker Hub
-1. Pushez l'image Docker vers Docker Hub :
+
+1. Taguer l'image Docker qu'on souhaite pusher :
+
+   docker tag docker_image_tag yourdockerhubusername/docker_image_tag
+   
+2. Pushez l'image Docker vers Docker Hub :
    
    docker push yourdockerhubusername/equationsolver:v1.0
    
