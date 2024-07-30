@@ -64,7 +64,7 @@ pipeline {
         // 6th stage : Pussh Docker image into Docker Hub
         stage('Push Docker Image') { 
             steps { // Actions à exécuter dans cette étape
-                withDockerRegistry([credentialsId: 'docker_hub_credentials', url: 'https://index.docker.io/v1/']) {
+                withDockerRegistry([credentialsId: 'dockerhub_credentials', url: 'https://index.docker.io/v1/']) {
                     echo 'Pushing Docker image...' // Affiche un message indiquant que l'image Docker va être poussée vers Docker Hub
                     sh 'docker push fares7816/equationsolverjenkins:latest' // Pousser l'image Docker vers Docker Hub
                 }
