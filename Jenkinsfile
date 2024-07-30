@@ -6,8 +6,6 @@ pipeline {
             steps { // Actions à exécuter dans cette étape
                 // Cloner le dépôt Git depuis la branche principale
                 git branch: 'main', url: 'https://github.com/djelili-fares/EquationSolver.git', credentialsId: 'github_credentials'
-                // Commande Git pour cloner le dépôt spécifié depuis la branche 'main'
-                // Utilise les identifiants configurés avec l'ID 'github_credentials'
                 echo 'Checkout completed.' // Affiche un message indiquant que l'étape de checkout est terminée
             }
         }
@@ -16,37 +14,28 @@ pipeline {
                 echo 'Repository cloned and ready for build.' // Affiche un message indiquant que le dépôt a été cloné et est prêt pour la construction
             }
         }
-
-        stage('Build') { // Troisième étape : 'Compilation de l'application'
-            steps { // La compilation se fait en exécutant simplement le fichier rebuild.sh :
+        stage('Build') { // Troisième étape : 'Build'
+            steps { // Actions à exécuter dans cette étape
                 echo 'Starting build process...' 
-                sh 'chmod +x rebuild.sh'
-                sh './rebuild.sh'
+                sh 'chmod +x rebuild.sh' // Rendre le script rebuild.sh exécutable
+                sh './rebuild.sh' // Exécuter le script rebuild.sh pour compiler l'application
             }
         }
-
-         stage('Verify Build') { // 4ème étape : 'Vérifier que les exécutables sont générées et que la compilation est réussie'
-            steps {
-                echo 'Verifying build...'
-                // script {
-                //     if (fileExists('build/EquationSolver') && fileExists('build/CApp/CApp') && fileExists('build/CppApp/CppApp')) {
-                //         echo 'Compilation and build were successful. All executables are present.'
-                //     } else {
-                //         error('Compilation failed or some executables are missing.')
-                //     }
-                // }
-                  script {
+        stage('Verify Build') { // Quatrième étape : 'Verify Build'
+            steps { // Actions à exécuter dans cette étape
+                echo 'Verifying build...' // Affiche un message indiquant que la vérification de la construction commence
+                script { // Utiliser un bloc de script pour effectuer la vérification conditionnelle
+                    // Vérifier que les fichiers exécutables existent
                     if (fileExists('build/EquationSolver') && fileExists('build/CApp/CApp') && fileExists('build/CppApp/CppApp')) {
                         echo 'Compilation and build were successful. All executables are present.'
-                        echo 'List of executables:'
-                        sh 'ls -l build/EquationSolver build/CApp/CApp build/CppApp/CppApp'
+                        echo 'List of executables:' // Affiche un message indiquant que tous les exécutables sont présents
+                        sh 'ls -l build/EquationSolver build/CApp/CApp build/CppApp/CppApp' // Lister les exécutables
                     } else {
-                        error('Compilation failed or some executables are missing.')
+                        error('Compilation failed or some executables are missing.') // Affiche un message d'erreur si un ou plusieurs exécutables sont manquants
                     }
-                  }
+                }
             }
         }
-
     }
 
     post { // Actions à effectuer après l'exécution des étapes définies dans 'stages'
