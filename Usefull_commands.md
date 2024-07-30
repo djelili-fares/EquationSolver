@@ -187,3 +187,25 @@ docker rename <old_name> <new_name>
 docker cp <container_id>:<container_path> <host_path>
 docker cp <host_path> <container_id>:<container_path>
 
+##################################################################
+##################################################################
+
+### JENKINS : 
+
+Démarrer Jenkins : sudo systemctl start jenkins
+Arrêter Jenkins : sudo systemctl stop jenkins
+Redémarrer Jenkins : sudo systemctl restart jenkins
+Vérifier le Statut de Jenkins : sudo systemctl status jenkins
+Installer des Plugins : java -jar jenkins-cli.jar -s http://localhost:8080/ install-plugin <plugin-name>
+Redémarrage Sécurisé : java -jar jenkins-cli.jar -s http://localhost:8080/ safe-restart
+Recharger la Configuration : java -jar jenkins-cli.jar -s http://localhost:8080/ reload-configuration
+Lister les Jobs : java -jar jenkins-cli.jar -s http://localhost:8080/ list-jobs
+Lancer un Job : java -jar jenkins-cli.jar -s http://localhost:8080/ build <job-name>
+Obtenir la Sortie d’un Job : java -jar jenkins-cli.jar -s http://localhost:8080/ console <job-name>
+
+# 1. Générer un jeton d'accès pour utiliser les commandes jenkins CLI :
+a. Se connecter à jenkins en ligne puis cliquer sur le profil utilisateur et aller à configurer ensuite générer un jeton en attribuant un nom !
+b. Lancer cette ligne pour lister les commandes jenkins CLI : java -jar jenkins-cli.jar -s http://localhost:8080/ -auth jenkins_username:jeton help
+c. S'authentifier avec jenkins CLI : java -jar jenkins-cli.jar -s http://localhost:8080/ -auth fares7816:11fbe35f9873f98bd49055cf609504efad who-am-i
+d. Lister les agents jenkins : java -jar jenkins-cli.jar -s http://localhost:8080/ -auth fares7816:11fbe35f9873f98bd49055cf609504efad list-nodes
+
