@@ -17,4 +17,4 @@ RUN chmod +x rebuild.sh
 RUN ./rebuild.sh
 
 # Exécuter l'application
-CMD ["./build/EquationSolver"]
+# CMD ["./build/EquationSolver"]
