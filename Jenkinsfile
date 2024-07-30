@@ -62,15 +62,15 @@ pipeline {
         }
 
         // 6th stage : Pussh Docker image into Docker Hub
-        stage('Push Docker Image') { // Étape de publication de l'image Docker sur Docker Hub
-            steps {
-                // Se connecter à Docker Hub en utilisant les identifiants spécifiés
-                withDockerRegistry([credentialsId: "$DOCKER_CREDENTIALS_ID", url: '']) {
-                    echo 'Pushing Docker image...' // Affiche un message indiquant que la publication de l'image Docker commence
-                    sh 'docker push $DOCKER_IMAGE_NAME:$DOCKER_TAG' // Pousse l'image Docker vers Docker Hub avec le nom et le tag spécifiés
+        stage('Push Docker Image') { 
+            steps { // Actions à exécuter dans cette étape
+                withDockerRegistry([credentialsId: 'docker_hub_credentials', url: 'https://index.docker.io/v1/']) {
+                    echo 'Pushing Docker image...' // Affiche un message indiquant que l'image Docker va être poussée vers Docker Hub
+                    sh 'docker push fares7816/equationsolverjenkins:latest' // Pousser l'image Docker vers Docker Hub
                 }
             }
         }
+
     }
 
     // Actions to do after executions of stages steps
