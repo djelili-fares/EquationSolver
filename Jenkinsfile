@@ -76,16 +76,33 @@ pipeline {
 
     }
 
-    // Actions to do after executions of stages steps
-    post { 
-        always { // Actions à effectuer à la fin du pipeline, qu'il réussisse ou échoue
-            echo 'Pipeline completed.' // Affiche un message indiquant que le pipeline est terminé
+    // // Actions to do after executions of stages steps
+    // post { 
+    //     always { // Actions à effectuer à la fin du pipeline, qu'il réussisse ou échoue
+    //         echo 'Pipeline completed.' // Affiche un message indiquant que le pipeline est terminé
+    //     }
+    //     failure { // Actions à effectuer si le pipeline échoue
+    //         echo 'Pipeline failed!' // Affiche un message indiquant que le pipeline a échoué
+    //     }
+    //     success { // Actions à effectuer si le pipeline réussit
+    //         echo 'Pipeline succeeded!' // Affiche un message indiquant que le pipeline a réussi
+    //     }
+    // }
+    post {
+        always {
+            echo 'Pipeline completed.'
         }
-        failure { // Actions à effectuer si le pipeline échoue
-            echo 'Pipeline failed!' // Affiche un message indiquant que le pipeline a échoué
+        failure {
+            echo 'Pipeline failed!'
+            mail to: 'fares.ia.dz@gmail.com',
+                 subject: "Pipeline Failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                 body: "Unfortunately, the pipeline ${env.JOB_NAME} build ${env.BUILD_NUMBER} failed. Please check the Jenkins console output for more details."
         }
-        success { // Actions à effectuer si le pipeline réussit
-            echo 'Pipeline succeeded!' // Affiche un message indiquant que le pipeline a réussi
+        success {
+            echo 'Pipeline succeeded!'
+            mail to: 'fares.ia.dz@gmail.com',
+                 subject: "Pipeline Succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER}",
+                 body: "Good news! The pipeline ${env.JOB_NAME} build ${env.BUILD_NUMBER} succeeded."
         }
     }
 }
