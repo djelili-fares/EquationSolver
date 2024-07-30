@@ -16,7 +16,7 @@ cmake ..
 make
 
 # Revenir au répertoire précédent
-cd ..
+# cd ..
 
 # Exécuter l'application
-./build/EquationSolver
+# ./build/EquationSolver
