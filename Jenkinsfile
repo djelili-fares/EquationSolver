@@ -28,13 +28,22 @@ pipeline {
          stage('Verify Build') { // 4ème étape : 'Vérifier que les exécutables sont générées et que la compilation est réussie'
             steps {
                 echo 'Verifying build...'
-                script {
+                // script {
+                //     if (fileExists('build/EquationSolver') && fileExists('build/CApp/CApp') && fileExists('build/CppApp/CppApp')) {
+                //         echo 'Compilation and build were successful. All executables are present.'
+                //     } else {
+                //         error('Compilation failed or some executables are missing.')
+                //     }
+                // }
+                  script {
                     if (fileExists('build/EquationSolver') && fileExists('build/CApp/CApp') && fileExists('build/CppApp/CppApp')) {
                         echo 'Compilation and build were successful. All executables are present.'
+                        echo 'List of executables:'
+                        sh 'ls -l build/EquationSolver build/CApp/CApp build/CppApp/CppApp'
                     } else {
                         error('Compilation failed or some executables are missing.')
                     }
-                }
+                  }
             }
         }
 
