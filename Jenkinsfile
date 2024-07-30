@@ -44,6 +44,16 @@ pipeline {
                 }
             }
         }
+
+        // 5th stage : 'Build Docker Image'
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...' // Affiche un message indiquant que la construction de l'image Docker commence
+                sh 'docker build -t equationsolver:latest .' // Construire l'image Docker
+                echo 'Docker image built successfully.' // Affiche un message indiquant que l'image Docker a été construite avec succès
+            }
+        }
+
     }
 
     // Actions to do after executions of stages steps
